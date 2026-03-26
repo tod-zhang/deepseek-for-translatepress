@@ -1,0 +1,237 @@
+/* DeepSeek TranslatePress Admin Page Styles */
+
+.trp-deepseek-admin {
+    max-width: 1100px;
+    margin-top: 20px;
+}
+
+/* Card container */
+.trp-ds-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.trp-ds-card h2 {
+    margin-top: 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2em;
+}
+
+.trp-ds-card h2 .dashicons {
+    color: #2271b1;
+}
+
+/* Table */
+.trp-ds-table {
+    margin-top: 16px;
+}
+
+.trp-ds-table th.check-column {
+    width: 40px;
+    padding: 10px;
+}
+
+.trp-ds-table td,
+.trp-ds-table th {
+    vertical-align: middle;
+}
+
+/* Actions */
+.trp-ds-actions {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+/* Danger button */
+.trp-ds-danger-btn {
+    background: #d63638 !important;
+    border-color: #d63638 !important;
+}
+
+.trp-ds-danger-btn:hover {
+    background: #b32d2e !important;
+    border-color: #b32d2e !important;
+}
+
+.trp-ds-danger-btn:disabled {
+    background: #ccc !important;
+    border-color: #ccc !important;
+    cursor: not-allowed;
+}
+
+.trp-ds-danger-btn .dashicons {
+    font-size: 18px;
+    line-height: 1.4;
+    margin-right: 4px;
+}
+
+/* Result message */
+.trp-ds-result {
+    margin-top: 12px;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.trp-ds-result.success {
+    background: #edfaef;
+    border: 1px solid #46b450;
+    color: #1e7e28;
+}
+
+.trp-ds-result.error {
+    background: #fef0f0;
+    border: 1px solid #d63638;
+    color: #8b1a1c;
+}
+
+/* Tabs */
+.trp-ds-lang-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid #2271b1;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.trp-ds-tab-btn {
+    padding: 10px 20px;
+    border: 1px solid #c3c4c7;
+    border-bottom: none;
+    background: #f0f0f1;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1d2327;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: -2px;
+    transition: background 0.15s, color 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.trp-ds-tab-btn:hover {
+    background: #e0e0e0;
+}
+
+.trp-ds-tab-btn.active {
+    background: #fff;
+    border-bottom: 2px solid #fff;
+    color: #2271b1;
+    font-weight: 600;
+}
+
+.trp-ds-badge {
+    background: #2271b1;
+    color: #fff;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.trp-ds-tab-btn.active .trp-ds-badge {
+    background: #135e96;
+}
+
+/* URL container */
+#trp-ds-urls-container {
+    margin-top: 16px;
+    min-height: 100px;
+}
+
+.trp-ds-urls-loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 0;
+    color: #666;
+}
+
+.trp-ds-urls-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+#trp-ds-url-count {
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}
+
+/* Progress bar */
+.trp-ds-progress {
+    margin-bottom: 16px;
+}
+
+.trp-ds-progress-bar {
+    height: 24px;
+    background: #e5e5e5;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.trp-ds-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2271b1, #135e96);
+    border-radius: 12px;
+    transition: width 0.3s ease;
+}
+
+.trp-ds-progress-text {
+    font-size: 12px;
+    color: #666;
+}
+
+/* URL table */
+.trp-ds-url-table {
+    font-size: 13px;
+}
+
+.trp-ds-url-table td {
+    vertical-align: middle;
+}
+
+.trp-ds-url-table .trp-ds-status {
+    font-weight: 500;
+}
+
+.trp-ds-url-table .trp-ds-status.pending {
+    color: #996800;
+}
+
+.trp-ds-url-table .trp-ds-status.crawling {
+    color: #2271b1;
+}
+
+.trp-ds-url-table .trp-ds-status.done {
+    color: #46b450;
+}
+
+.trp-ds-url-table .trp-ds-status.failed {
+    color: #d63638;
+}
+
+/* Notice */
+.trp-ds-notice {
+    color: #666;
+    font-style: italic;
+}
+
+/* Hidden utility */
+.hidden {
+    display: none !important;
+}
