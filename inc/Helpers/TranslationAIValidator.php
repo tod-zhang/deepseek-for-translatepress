@@ -66,8 +66,8 @@ class TranslationAIValidator
         $prompt .= "1. Source language residue — any untranslated {$sourceLangName} text remaining in the translation\n";
         $prompt .= "2. Content loss — translation is significantly shorter than the original (missing content)\n";
         $prompt .= "3. HTML tag damage — HTML tags are broken, mismatched, or missing\n\n";
-        $prompt .= "Return ONLY a JSON array, each element: {\"index\": <number>, \"result\": \"PASS\" or \"FAIL\"}\n";
-        $prompt .= "Do NOT include any other text, explanation, or markdown formatting. Return raw JSON only.\n\n";
+        $prompt .= "Return a JSON object with a \"results\" key containing an array, each element: {\"index\": <number>, \"result\": \"PASS\" or \"FAIL\"}\n";
+        $prompt .= "Example: {\"results\": [{\"index\": 1, \"result\": \"PASS\"}, {\"index\": 2, \"result\": \"FAIL\"}]}\n\n";
         $prompt .= "Pairs to check:\n";
 
         $index = 1;
@@ -91,12 +91,13 @@ class TranslationAIValidator
     private static function callApi($promptData, $apiKey, $apiUrl)
     {
         $data = [
-            'model'       => 'deepseek-chat',
-            'temperature' => 0.1, // 低温度确保一致性
-            'messages'    => [
+            'model'           => 'deepseek-chat',
+            'temperature'     => 0.1,
+            'response_format' => ['type' => 'json_object'],
+            'messages'        => [
                 ['role' => 'user', 'content' => $promptData['prompt']]
             ],
-            'max_tokens'  => 2000,
+            'max_tokens'      => 2000,
         ];
 
         $response = wp_remote_post($apiUrl, [
@@ -148,16 +149,25 @@ class TranslationAIValidator
         $passed = [];
         $failed = [];
 
-        // 提取 JSON（可能被 markdown 代码块包裹）
+        // 解析 JSON（response_format 已强制返回纯 JSON，但仍做容错处理）
         $jsonContent = $content;
         if (preg_match('/```(?:json)?\s*([\s\S]*?)```/', $content, $matches)) {
             $jsonContent = $matches[1];
         }
         $jsonContent = trim($jsonContent);
 
-        $results = json_decode($jsonContent, true);
+        $decoded = json_decode($jsonContent, true);
 
-        // 如果 JSON 解析失败，保守处理：全部通过
+        // 支持两种格式：{"results": [...]} 或直接 [...]
+        if (is_array($decoded) && isset($decoded['results'])) {
+            $results = $decoded['results'];
+        } elseif (is_array($decoded) && isset($decoded[0])) {
+            $results = $decoded;
+        } else {
+            $results = null;
+        }
+
+        // JSON 解析失败，保守处理：全部通过
         if (!is_array($results)) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 error_log('[DeepSeek QC Layer2] JSON parse failed, content: ' . mb_substr($content, 0, 200));

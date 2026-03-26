@@ -5,6 +5,7 @@ use hollisho\helpers\ArrayHelper;
 use hollisho\translatepress\translate\deepseek\inc\Helpers\DeepSeekApiHelper;
 use hollisho\translatepress\translate\deepseek\inc\Helpers\TranslationQualityChecker;
 use hollisho\translatepress\translate\deepseek\inc\Helpers\TranslationAIValidator;
+use hollisho\translatepress\translate\deepseek\inc\Helpers\TranslationRetryLimiter;
 use TRP_Machine_Translator;
 use WP_Error;
 
@@ -184,10 +185,17 @@ class DeepSeekTranslationEngine extends TRP_Machine_Translator
                     ));
                 }
 
+                // 记录失败的翻译到每日重试计数器
+                $allFailed = $aiResult['failed'] + $qualityResult['failed'];
+                if (!empty($allFailed)) {
+                    TranslationRetryLimiter::recordBatchFailure($allFailed, $target_language);
+                }
+
                 // 合并最终结果：AI通过 + AI失败(回退原文) + 第一层失败(回退原文)
-                $translated_strings = $aiResult['passed'] + $aiResult['failed'] + $qualityResult['failed'];
+                $translated_strings = $aiResult['passed'] + $allFailed;
             } else {
-                // 全部未通过第一层，全部回退为原文
+                // 全部未通过第一层，记录失败并回退为原文
+                TranslationRetryLimiter::recordBatchFailure($qualityResult['failed'], $target_language);
                 $translated_strings = $qualityResult['failed'];
             }
         }
