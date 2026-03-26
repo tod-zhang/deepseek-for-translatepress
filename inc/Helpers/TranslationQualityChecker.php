@@ -113,9 +113,17 @@ class TranslationQualityChecker
             return true;
         }
 
+        // 移除白名单词汇（品牌名、专有名词），避免误判
+        $plainText = self::stripWhitelistedTerms($plainText);
+
         // 计算源语言字符数
         $sourceCharCount = preg_match_all($pattern, $plainText);
         $totalCharCount  = mb_strlen($plainText);
+
+        // 移除白名单后文本为空，直接通过
+        if ($totalCharCount === 0) {
+            return true;
+        }
 
         if ($totalCharCount < self::SHORT_TEXT_THRESHOLD) {
             // 短文本：有任何源语言字符 → 拒绝
@@ -144,5 +152,64 @@ class TranslationQualityChecker
 
         // 不在列表中的语言（拉丁字母系语言等）不适用代码级检查
         return null;
+    }
+
+    /**
+     * 获取白名单（品牌名/专有名词）
+     * 从 TranslatePress「从自动转换中排除字符串」设置中读取
+     *
+     * @return array 白名单词汇列表
+     */
+    private static function getWhitelist()
+    {
+        static $whitelist = null;
+
+        if ($whitelist !== null) {
+            return $whitelist;
+        }
+
+        $whitelist = [];
+
+        if (!function_exists('get_option')) {
+            return $whitelist;
+        }
+
+        $settings = get_option('trp_advanced_settings', []);
+
+        // TranslatePress 在 trp_advanced_settings 中存储排除字符串
+        if (!empty($settings['exclude_strings_from_automatic_translation'])) {
+            $excluded = $settings['exclude_strings_from_automatic_translation'];
+            if (is_array($excluded)) {
+                $whitelist = array_filter(array_map('trim', $excluded));
+            } elseif (is_string($excluded)) {
+                $whitelist = array_filter(array_map('trim', explode("\n", $excluded)));
+            }
+        }
+
+        return $whitelist;
+    }
+
+    /**
+     * 从文本中移除白名单词汇
+     * 这样品牌名（如"华为"、"淘宝"）出现在翻译中不会被误判为源语言残留
+     *
+     * @param string $text 待检查的文本
+     * @return string 移除白名单词汇后的文本
+     */
+    private static function stripWhitelistedTerms($text)
+    {
+        $whitelist = self::getWhitelist();
+
+        if (empty($whitelist)) {
+            return $text;
+        }
+
+        foreach ($whitelist as $term) {
+            if (mb_strlen($term) > 0) {
+                $text = str_ireplace($term, '', $text);
+            }
+        }
+
+        return trim($text);
     }
 }
