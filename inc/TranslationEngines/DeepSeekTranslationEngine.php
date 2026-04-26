@@ -36,8 +36,9 @@ class DeepSeekTranslationEngine extends TRP_Machine_Translator
         $prompt = DeepSeekApiHelper::convert($strings_array, $source_language, $language_code);
 
         $data = [
-            'model' => 'deepseek-chat',
+            'model' => 'deepseek-v4-flash',
             'temperature' => 0.3,
+            'thinking' => ['type' => 'disabled'],
             'messages' => [
                 ['role' => 'user', 'content' => $prompt]
             ],

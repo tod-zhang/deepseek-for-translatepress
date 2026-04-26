@@ -91,8 +91,9 @@ class TranslationAIValidator
     private static function callApi($promptData, $apiKey, $apiUrl)
     {
         $data = [
-            'model'           => 'deepseek-chat',
+            'model'           => 'deepseek-v4-flash',
             'temperature'     => 0.1,
+            'thinking'        => ['type' => 'disabled'],
             'response_format' => ['type' => 'json_object'],
             'messages'        => [
                 ['role' => 'user', 'content' => $promptData['prompt']]
